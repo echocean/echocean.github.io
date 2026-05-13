@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Flow Matching | Echocean&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="现在有很多种生成模型，例如GAN，DDPM，这些方法都非常成功，但它们在训练或采样时，往往需要复杂的步骤，计算成本也比较高，而Flow Matching 提供了一种更加直接和优雅的方式。 他的作用是将一个初始分布（比如高斯分布）进行多次变换，最终得到我们想要的分布（比如生成一张图片，生成特定的噪声分布）  这个变换的路径，就是一条连续的流（Flow）。而 Flow Matching 的核心思想，就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flow Matching">
+<meta property="og:url" content="http://example.com/2025/10/10/Flow-Matching/index.html">
+<meta property="og:site_name" content="Echocean&#39;s blog">
+<meta property="og:description" content="现在有很多种生成模型，例如GAN，DDPM，这些方法都非常成功，但它们在训练或采样时，往往需要复杂的步骤，计算成本也比较高，而Flow Matching 提供了一种更加直接和优雅的方式。 他的作用是将一个初始分布（比如高斯分布）进行多次变换，最终得到我们想要的分布（比如生成一张图片，生成特定的噪声分布）  这个变换的路径，就是一条连续的流（Flow）。而 Flow Matching 的核心思想，就">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/flow.png">
+<meta property="og:image" content="http://example.com/images/flow1.png">
+<meta property="article:published_time" content="2025-10-10T05:52:06.000Z">
+<meta property="article:modified_time" content="2026-04-25T02:51:14.071Z">
+<meta property="article:author" content="Echocean">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/flow.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Echocean's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Echocean&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Flow-Matching" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/10/10/Flow-Matching/" class="article-date">
+  <time class="dt-published" datetime="2025-10-10T05:52:06.000Z" itemprop="datePublished">2025-10-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Flow Matching
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>现在有很多种生成模型，例如GAN，DDPM，这些方法都非常成功，但它们在训练或采样时，往往需要复杂的步骤，计算成本也比较高，而Flow Matching 提供了一种更加直接和优雅的方式。</p>
+<p>他的作用是将一个初始分布（比如高斯分布）进行多次变换，最终得到我们想要的分布（比如生成一张图片，生成特定的噪声分布）</p>
+<p><img src="/../images/flow.png"></p>
+<p>这个变换的路径，就是一条连续的流（Flow）。而 Flow Matching 的核心思想，就是学习如何构造这条最优的路径，让数据点能够沿着这条路径，从简单的噪声分布，顺畅地“流”向复杂的数据分布。</p>
+<p>和扩散模型相比，Flow Matching直接规划出了一条直接，确定的变换路径，使得它的前向过程采样速度极快。</p>
+<p>接下来介绍四个部分：</p>
+<ol>
+<li>基本定义</li>
+<li>实际训练的可行性</li>
+<li>如何设计损失函数</li>
+<li>如何从数学中抽象出计算机可表示的模型</li>
+</ol>
+<h1 id="1-基本定义"><a href="#1-基本定义" class="headerlink" title="1. 基本定义"></a>1. 基本定义</h1><p>我们的最终目标是 $x_0 \rightarrow x_t$ 我们令原始分布为 $x_0$，也就是初始的高斯分布</p>
+<p>$x_0$依次经过多个变换 $f_0,f_1…f_t$等等会得到 $x_t$</p>
+<p>$x_t&#x3D;(f_t \circ f_{t-1}\circ f_{t-2}…f_{1})(x_0)$</p>
+<p>$\phi(t)\triangleq f_t\circ f_{t-1}\circ f_{t-2}…f_{1}$ 这个被称为流，也就是变换函数</p>
+<h2 id="ODE视角下的-FLow-Matching"><a href="#ODE视角下的-FLow-Matching" class="headerlink" title="ODE视角下的 FLow Matching"></a>ODE视角下的 FLow Matching</h2><p>将 $t \in [0,T]$进行归一化，会得到 $t \in [0,1]$,将t的区间归一化到 [0,1]</p>
+<p>得到一个flow matching的常微分方程的形式,于是我们得到了速度 $v_t$</p>
+<p>$ v_t(\phi_{t}(x)) \triangleq \frac{d}{dt} \phi_{t}(x)$</p>
+<p>$\phi_0(x)&#x3D;x$</p>
+<p>从 $x_0$开始，经过 $v_0$得到 $x_{1\triangle}$,再经过 $v_{1\triangle}$ 得到 $x_{2\triangle}$，最终得到 $x_1$</p>
+<p><img src="/../images/flow1.png"></p>
+<h2 id="概率密度变换公式"><a href="#概率密度变换公式" class="headerlink" title="概率密度变换公式"></a>概率密度变换公式</h2><p>若，$z\sim\pi(z),f:x&#x3D;f(z),z&#x3D;f^{-1}(x)$，那么</p>
+<p>$p(x)&#x3D;\pi(z)\left|\frac{d z}{d x}\right|&#x3D;\pi\left(f^{-1}(x)\right)\left|\frac{d f^{-1}}{d x}\right|&#x3D;\pi\left(f^{-1}(x)\right)\left|\left(f^{-1}\right)^{\prime}(x)\right|$</p>
+<h2 id="概率密度路径"><a href="#概率密度路径" class="headerlink" title="概率密度路径"></a>概率密度路径</h2><p>$P_t$,设定好一个概率的路径，根据 $\phi_t$和 $P_t$就能够求出来 $v_t$，</p>
+<p>在起点 $​t​&#x3D;0$ 时， $P_0$ 就是我们的噪声分布（比如，一个标准高斯分布）</p>
+<p>在 t&#x3D;1时， $P_1$就是最终的分布,可以理解为上面的 $x_t$就是 $P_t$的一次采样</p>
+<p>所以带入上面的概率密度变换公式</p>
+<p>$p_t&#x3D;\phi_t(p_0)$</p>
+<p>$p_t&#x3D;p_0(\phi^{-1}(x)|(\phi^{-1})’(x))$</p>
+<h1 id="2-实际训练的可行性"><a href="#2-实际训练的可行性" class="headerlink" title="2. 实际训练的可行性"></a>2. 实际训练的可行性</h1><p>Flow Matching中采用的方案是让神经网络学习速度向量场 $u$</p>
+<p>首先我们要能够求loss函数：</p>
+<p>$\mathcal{L}<em>{\mathrm{FM}}(\theta) &#x3D; \mathbb{E}</em>{t, p_{t}(x)} \left| v_{t}(x) - u_{t}(x) \right|^{2}$</p>
+<p>这里面包含两个速度向量场，一个是神经网络对速度的预测值 $v_t$,另一个是真实的速度向量场 $u_t$</p>
+<blockquote>
+<p>注意 t 是归一化的， $x_0$是噪声， $x_1$是目标分布</p>
+</blockquote>
+<p>虽然我们不知道 $u_t$到底是什么，但是我们知道 $u_t(x|x_1)$,这就是一个带条件的向量场，如果能通过这个带条件的向量场得到无条件的向量场，那么这个问题就迎刃而解了。</p>
+<blockquote>
+<p>为什么我们知道 $u_t(x|x_1)$？因为Flow Matching设计了一个带条件的概率密度路径，在后面会讲，现在先认为我们已知它</p>
+</blockquote>
+<p>条件向量场可以完成条件概率密度路径的行走</p>
+<p>$u_t(x|x_1) \rightarrow P_t(x|x_t) \ \checkmark$</p>
+<p>可是凭什么条件向量场可以替代不带条件的向量场？</p>
+<p>$u_t(x) \rightarrow P_t(x)\ ?$</p>
+<p>求 边缘概率密度：</p>
+<p>$P_t(x)&#x3D;\int P_t(x|x_1)q(x_1)dx_1$</p>
+<p>$u_t(x)&#x3D;?$</p>
+<p><strong>定理1</strong></p>
+<blockquote>
+<p>引入一个连续性方程，这个方程是流体力学的东西，我也没去深究，直接拿来用好了</p>
+<p>$\frac{d}{dt}p_t(x)+div(p_t(x)v_t(x))&#x3D;0$</p>
+<p>如果满足这个方程，那么就代表着可以完成概率密度路径的行走</p>
+</blockquote>
+<p>把这个连续性方程左边的 $p_t(x)$用边缘概率密度换一下：</p>
+<p>$\frac{d}{d t}p_{t}(x) &#x3D; \int\left(\frac{d}{d t}p_{t}\left(x\mid x_{1}\right)\right) q\left(x_{1}\right) dx_{1}$           （边缘概率密度）</p>
+<p>$&#x3D; -\int\operatorname{div}\left(u_{t}\left(x\mid x_{1}\right) p_{t}\left(x\mid x_{1}\right)\right) q\left(x_{1}\right) dx_{1}$     （带入连续性方程）</p>
+<p>（因为积分对 $x_1$积，div 对 $x$作用，所以可以积分号和div互换）</p>
+<p>$&#x3D; -\operatorname{div}\left(\int u_{t}\left(x\mid x_{1}\right) p_{t}\left(x\mid x_{1}\right) q\left(x_{1}\right) dx_{1}\right)$</p>
+<p>$？&#x3D; -\operatorname{div}\left(u_{t}(x) p_{t}(x)\right)$</p>
+<p>如果最后一个等号成立，那么就说明带条件的速度向量场满足连续性方程可以推出不带条件的也满足，</p>
+<p>也就说明不带条件的也能完成概率密度路径的行走</p>
+<p>如果想让最后一个等号成立，那么括号内的内容需要相等，于是得到：</p>
+<p>$u_t(x)&#x3D;\int u_t(x|x_1)\frac{P_t(x|x_1)}{P_t(x)}q(x_1)dx_1$</p>
+<p>所以只需要将 $u_t(x)$按照上述式子设置，那么就有 $\frac{d}{dt}p_t(x)+div(u_t(x)p_t(x))$成立，满足连续性方程，</p>
+<p>认为这样的 $u_t$能够使得 $x$走完边缘概率密度路径</p>
+<h1 id="3-如何设计损失函数"><a href="#3-如何设计损失函数" class="headerlink" title="3. 如何设计损失函数"></a>3. 如何设计损失函数</h1><p>刚才我们证明了利用带条件的速度向量场可以代替用不带条件的速度向量场进行训练，但是我们只有带条件的损失函数，如何求不带条件的损失函数呢？</p>
+<p>$\mathcal{L}<em>{\mathrm{FM}}(\theta) &#x3D; \mathbb{E}</em>{t, p_{t}(x)} \left| v_{t}(x) - u_{t}(x) \right|^{2}$                            不带条件</p>
+<p>$\mathcal{L}<em>{\mathrm{CFM}}(\theta) &#x3D; \mathbb{E}</em>{t,q(x_1) ,p_{t}(x|x_1)} \left| v_{t}(x) - u_{t}(x|x_1) \right|^{2}$          带条件</p>
+<p>Flow Matching的方法是直接用第二个损失函数，证明两个函数在神经网络训练中作用等价，所以需要证明$\nabla_{\theta} \mathcal{L}<em>{FM}(\theta) &#x3D; \nabla</em>{\theta} \mathcal{L}_{CFM}(\theta)$</p>
+<p>将两个模平方展开</p>
+<p>$\begin{aligned} \left|v_{t}(x)-u_{t}(x)\right|^{2} &amp;&#x3D;\left|v_{t}(x)\right|^{2}-2\left\langle v_{t}(x),u_{t}(x)\right\rangle+\left|u_{t}(x)\right|^{2}\ \left|v_{t}(x)-u_{t}\left(x\mid x_{1}\right)\right|^{2} &amp;&#x3D;\left|v_{t}(x)\right|^{2}-2\left\langle v_{t}(x),u_{t}\left(x\mid x_{1}\right)\right\rangle+\left|u_{t}\left(x\mid x_{1}\right)\right|^{2} \end{aligned} $</p>
+<p>$|u_t(x)|^2$和 $|u_t(x|x_1)|^2$都是实际的向量场，和参数 $\theta$无关，是个常数</p>
+<p>现在计算第一项：</p>
+<p>$E_{P_t(x)}|v_t(x)|^2&#x3D;\int |v_t(x)|^2P_t(x)dx&#x3D;\iint|v_t(x)|^2P_t(x|x_1)q(x_1)dx_1dx$</p>
+<p>将左边的期望展开成中间的形式，然后用条件概率改写一下，发现和带条件的第一项相等</p>
+<p>$&#x3D;\int E_{q(x_1),P_t(x|x_1)}|v_t(x)|^2dx&#x3D;E_{q(x_1),P_t(x|x_1)}|v_t(x)|^2$</p>
+<p>现在计算第二项：</p>
+<p>$E_{P_t(x)}\langle v_t(x),u_t(x)\rangle$</p>
+<p>将上一节推导出的 $u_t$代进去</p>
+<p>$&#x3D;\int \langle v_t(x),\frac{\int u_t(x|x_1)P_t(x|x_1)q(x_1)dx_1}{P_t(x)} \rangle P_t(x)dx$                                  消掉 $P_t(x)$</p>
+<p>$&#x3D;\int \langle v_t(x),\int u_t(x|x_1)P_t(x|x_1)q(x_1)dx_1 \rangle dx$                                            这是一个二重积分</p>
+<p>$&#x3D;\iint \langle v_t(x),u_t(x|x_1)\rangle P_t(x|x_1)q(x_1)dx_1dx$                                                发现它和带条件的第二项也相等</p>
+<p>$&#x3D;E_{q(x_1),P_t(x|x_1)}\langle v_t(x),u_t(x|x_1)\rangle$</p>
+<p>因此两个损失函数进行求导时等价，我们可以用带条件的损失函数来进行梯度更新，能够保证它和不带条件的损失函数得到相同的模型参数</p>
+<h1 id="4-计算机可表示的模型"><a href="#4-计算机可表示的模型" class="headerlink" title="4. 计算机可表示的模型"></a>4. 计算机可表示的模型</h1><p>上面的证明都是数学上连续的计算，很难在计算机中进行表示，因此需要推导出一种具体形式</p>
+<p>首先作者定义了概率密度路径，这也是我们知道 $u_t(x|x_1)$的原因：</p>
+<p>$P_t(x|x_1)&#x3D;\mathcal{N}(x|\mu_t(x_1),\sigma_t(x_1)^2I)$</p>
+<p>$\therefore\phi_t(x)&#x3D;\sigma_t(x_1)x+\mu_t(x_1)$</p>
+<p>这里的任意时刻的x，也就是 $\phi_t(x_0)&#x3D;\phi_t(x)$</p>
+<p>保证在 $t&#x3D;0$时服从 $\mathcal N(0,1)$， $t&#x3D;1$时路径收缩到目标点</p>
+<p>根据微分性质，我们要求的</p>
+<p>$u_t(x|x_1)&#x3D;\frac{d\phi_t(x)}{dt}$</p>
+<p>$\because \phi_t(x)&#x3D;\sigma_t(x_1)x+\mu_t(x_1)$                     上面刚刚定义的</p>
+<p>$\therefore u_t(x|x_1)&#x3D;\sigma_t’(x_1)x+\mu_t’(x_1)$</p>
+<p>$\because x&#x3D;\frac{\phi_t(x)-\mu_t(x_1)}{\sigma_t(x_1)}$                               还是上面刚刚定义的</p>
+<p>$\therefore u_t(x|x_1)&#x3D;u_t(\phi_t(x)|x_1)&#x3D;\frac{\sigma_t’(x_1)}{\sigma_t(x_1)}(\phi_t(x)-\mu_t(x_1))+\mu_t’(x_1)$</p>
+<blockquote>
+<p>用显式公式（如线性插值）计算中间状态，使得所有经过这个点的“训练路径”都能被较好地满足</p>
+</blockquote>
+<p>模型的任务不是记住某一条直线，而是在整个数据空间中的每一个坐标点 $(t, x)$，输出一个最一致的向量，使得所有经过这个点的“训练路径”都能被较好地满足。 这迫使它学习一个平滑的、全局一致的向量场。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/10/10/Flow-Matching/" data-id="cmp3hc1x40000hcggebszb25g" data-title="Flow Matching" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2025/06/14/use-of-AFF3CT/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">use of AFF3CT</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/10/10/Flow-Matching/">Flow Matching</a>
+          </li>
+        
+          <li>
+            <a href="/2025/06/14/use-of-AFF3CT/">use of AFF3CT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/06/20/thread-safety-of-gorm/">thread safety of gorm</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 Echocean<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

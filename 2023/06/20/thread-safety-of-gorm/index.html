@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>thread safety of gorm | Echocean&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="gorm的并发安全问题  最近负责一个小项目的后端，需要用到sql数据库，本着能偷懒就绝不多写一行代码的精神，我决定用gorm帮助我偷懒。由于代码逻辑十分简单所以entity、dao等等各层写的不亦乐乎，但是多次高并发程序的开发经历告诉我事情没有这么简单，果然gorm并没有说自己对多线程操作保证安全… 下面是gorm关于并发安全的叙述https:&#x2F;&#x2F;gorm.io&#x2F;zh_CN&#x2F;docs&#x2F;metho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="thread safety of gorm">
+<meta property="og:url" content="http://example.com/2023/06/20/thread-safety-of-gorm/index.html">
+<meta property="og:site_name" content="Echocean&#39;s blog">
+<meta property="og:description" content="gorm的并发安全问题  最近负责一个小项目的后端，需要用到sql数据库，本着能偷懒就绝不多写一行代码的精神，我决定用gorm帮助我偷懒。由于代码逻辑十分简单所以entity、dao等等各层写的不亦乐乎，但是多次高并发程序的开发经历告诉我事情没有这么简单，果然gorm并没有说自己对多线程操作保证安全… 下面是gorm关于并发安全的叙述https:&#x2F;&#x2F;gorm.io&#x2F;zh_CN&#x2F;docs&#x2F;metho">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/gorm.png">
+<meta property="article:published_time" content="2023-06-20T02:20:44.000Z">
+<meta property="article:modified_time" content="2026-04-25T02:51:14.071Z">
+<meta property="article:author" content="Echocean">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/gorm.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Echocean's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Echocean&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-thread-safety-of-gorm" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/06/20/thread-safety-of-gorm/" class="article-date">
+  <time class="dt-published" datetime="2023-06-20T02:20:44.000Z" itemprop="datePublished">2023-06-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      thread safety of gorm
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="gorm的并发安全问题"><a href="#gorm的并发安全问题" class="headerlink" title="gorm的并发安全问题"></a>gorm的并发安全问题</h2><p>  最近负责一个小项目的后端，需要用到sql数据库，本着能偷懒就绝不多写一行代码的精神，我决定用gorm帮助我偷懒。<br>由于代码逻辑十分简单所以entity、dao等等各层写的不亦乐乎，但是多次高并发程序的开发经历告诉我事情没有这么简单，果然gorm并没有说自己对多线程操作保证安全…</p>
+<p><img src="/../images/gorm.png"><br>下面是gorm关于并发安全的叙述<br><a target="_blank" rel="noopener" href="https://gorm.io/zh_CN/docs/method_chaining.html">https://gorm.io/zh_CN/docs/method_chaining.html</a></p>
+<h2 id="链式方法"><a href="#链式方法" class="headerlink" title="链式方法"></a>链式方法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">链式方法是将 Clauses 修改或添加到当前 Statement 的方法，例如：</span><br><span class="line"></span><br><span class="line">Where, Select, Omit, Joins, Scopes, Preload, Raw</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">终结（方法） 是会立即执行注册回调的方法，然后生成并执行 SQL，比如这些方法：</span><br><span class="line"></span><br><span class="line">Create, First, Find, Take, Save, Update, Delete, Scan, Row, Rows</span><br></pre></td></tr></table></figure>
+
+<p>新建会话方法特指 <code>gorm.DB.Session(&amp;gorm.Session&#123;&#125;)</code></p>
+<p>链式方法一般都是返回当前类一个实例指针的方法，比如gorm源码中这两句：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Session(config *Session) *DB</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Create(value <span class="keyword">interface</span>&#123;&#125;) (tx *DB)</span><br></pre></td></tr></table></figure>
+
+<p>对 <code>*DB</code> 类型实例的调用返回了一个 <code>*DB</code>指针<br>如果我要对 Session方法的返回值调用 Create方法，<br>可以这么写：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d:=db.Session(balabalabala)</span><br><span class="line">d.Create(balabalabala)</span><br></pre></td></tr></table></figure>
+
+<p>但是既然这Session返回了一个<code>*DB</code>指针，那么可以这样调用</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.Session(balabala).Create(balabala)</span><br></pre></td></tr></table></figure>
+
+<p>这样写出的代码更优雅一些，但是<br>这不是本文章的重点,算是前置知识吧</p>
+<h2 id="gorm中并发安全的关键"><a href="#gorm中并发安全的关键" class="headerlink" title="gorm中并发安全的关键"></a>gorm中并发安全的关键</h2><p>gorm定义了一个 <code>*DB</code> 类型<br>这个类型里面有一个很重要的成员： <code>DB.clone</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DB <span class="keyword">struct</span> &#123;</span><br><span class="line">	*Config</span><br><span class="line">	Error        <span class="type">error</span></span><br><span class="line">	RowsAffected <span class="type">int64</span></span><br><span class="line">	Statement    *Statement</span><br><span class="line">	clone        <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>gorm中还有另一个函数，大多数的链式方法首先会执行下面这个函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> getInstance() *DB &#123;</span><br><span class="line">	<span class="keyword">if</span> db.clone &gt; <span class="number">0</span> &#123;</span><br><span class="line">		tx := &amp;DB&#123;Config: db.Config, Error: db.Error&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> db.clone == <span class="number">1</span> &#123;</span><br><span class="line">			<span class="comment">// clone with new statement</span></span><br><span class="line">			tx.Statement = &amp;Statement&#123;</span><br><span class="line">				DB:       tx,</span><br><span class="line">				ConnPool: db.Statement.ConnPool,</span><br><span class="line">				Context:  db.Statement.Context,</span><br><span class="line">				Clauses:  <span class="keyword">map</span>[<span class="type">string</span>]clause.Clause&#123;&#125;,</span><br><span class="line">				Vars:     <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">0</span>, <span class="number">8</span>),</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// with clone statement</span></span><br><span class="line">			tx.Statement = db.Statement.clone()</span><br><span class="line">			tx.Statement.DB = tx</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> tx</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> db</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们把这个函数的逻辑简化一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clone &lt; 0: 返回原来的 *DB</span><br><span class="line">clone = 1: 新建一个 *DB 并且新的 *DB 的clone字段为0</span><br><span class="line">clone &gt; 1: 复制原来 *DB 并返回，那么新 *DB 的clone字段和原来相同，也会 &gt; 1</span><br></pre></td></tr></table></figure>
+
+<p>我们每对<code>*DB</code>的方法进行一次调用都有可能对它<code>*Statement</code>字段进行修改，比如<code>Limit</code>方法修改了一次<code>Statement</code>（ <code>tx.Statement.AddClause(args)</code> ）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Limit(limit <span class="type">int</span>) (tx *DB) &#123;</span><br><span class="line">	tx = db.getInstance()</span><br><span class="line">	tx.Statement.AddClause(clause.Limit&#123;Limit: &amp;limit&#125;)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Where方法也会修改</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Where(query <span class="keyword">interface</span>&#123;&#125;, args ...<span class="keyword">interface</span>&#123;&#125;) (tx *DB) &#123;</span><br><span class="line">	tx = db.getInstance()</span><br><span class="line">	<span class="keyword">if</span> conds := tx.Statement.BuildCondition(query, args...); <span class="built_in">len</span>(conds) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		tx.Statement.AddClause(clause.Where&#123;Exprs: conds&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果两次条件不同的查询都使用同一个<code>*DB</code>，那么就会并发地对同一个<code>Statement</code>进行修改，就会出现安全问题,比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * from table1 where id = <span class="number">1</span></span><br><span class="line"><span class="keyword">select</span> * from table1 where id = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>他们向同一个statement写入了不同查询条件，最终的结果几乎一定会出错。<br>因此问题的关键就在于, 对不同的查询要使用不同的<code>*DB</code>，有一个很实用的方<code>*DB.Session()</code>, 如果传入的<code>*gorm.Session&#123;&#125;</code>结构体指针中NewDB字段为true,那么就会返回一个clone为1的新<code>*DB</code>，对这个<code>*DB</code> 的调用就不会影响到原来的<code>*DB</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newDB := oldDB.Session(&amp;gorm.Session&#123;NewDB: <span class="literal">true</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>或者诸位可以自己查看各个链式方法和终结方法的源码，确定该方法对老的<code>*DB</code> 会进行什么操作，只要能够保证不同的sql操作条件作用在不同的<code>*DB</code> 上就好了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/06/20/thread-safety-of-gorm/" data-id="cmp3hc1x60002hcggfioy73ai" data-title="thread safety of gorm" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/06/14/use-of-AFF3CT/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          use of AFF3CT
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/10/10/Flow-Matching/">Flow Matching</a>
+          </li>
+        
+          <li>
+            <a href="/2025/06/14/use-of-AFF3CT/">use of AFF3CT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/06/20/thread-safety-of-gorm/">thread safety of gorm</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 Echocean<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
