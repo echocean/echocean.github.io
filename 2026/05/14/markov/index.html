@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>markov | Echocean's blog</title><meta name="author" content="Echocean"><meta name="copyright" content="Echocean"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="markov"><meta name="application-name" content="markov"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="markov"><meta property="og:url" content="http://example.com/2026/05/14/markov/index.html"><meta property="og:site_name" content="Echocean's blog"><meta property="og:description" content="马尔可夫奖励过程 某个状态的回报 $G_t &amp;#x3D; \sum_{i&amp;#x3D;0}^{T-t-1}{\gamma^{i}}{r_{t+i+1}} &amp;#x3D; r_{t+1}+\gamma r_{t+2}+\gamma^2r_{t+3}+\cdots+\gamma^{T-t-1}r_T$ 其中，T是最终时刻，γ"><meta property="og:locale" content="en"><meta property="og:image" content="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg"><meta property="article:author" content="Echocean"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg"><meta name="description" content="马尔可夫奖励过程 某个状态的回报 $G_t &amp;#x3D; \sum_{i&amp;#x3D;0}^{T-t-1}{\gamma^{i}}{r_{t+i+1}} &amp;#x3D; r_{t+1}+\gamma r_{t+2}+\gamma^2r_{t+3}+\cdots+\gamma^{T-t-1}r_T$ 其中，T是最终时刻，γ"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2026/05/14/markov/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: {"enable":true,"img":"https://upload-bbs.miyoushe.com/upload/2024/07/27/125766904/ba62475f396df9de3316a08ed9e65d86_5680958632268053399..png"},
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"w(ﾟДﾟ)w 不要走！再看看嘛！","backTitle":"♪(^∇^*)欢迎肥来！"},
+  LA51: undefined,
+  greetingBox: undefined,
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: undefined,
+  authorStatus: undefined,
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Echocean","link":"Link: ","source":"Source: Echocean's blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.2.0/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.2.0/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Echocean\'s blog',
+  title: 'markov',
+  postAI: '',
+  pageFillDescription: '马尔可夫奖励过程, 贝尔曼方程, 马尔可夫决策过程, Q函数的引入马尔可夫奖励过程某个状态的回报其中是最终时刻是折扣因子越往后折扣越多所以其实不是某个特定的值只是一个随机变量吧如果对这个随机变量取期望就能得到某个状态的价值了称为状态价值函数表示当前是第几个时间步表示该时间步所处的具体状态并且我们要注意其实也是一个参数因为即使相同剩余步数不同也会导致回报的期望不同贝尔曼方程我们有了某个状态下某个轨迹的实际回报如何计算他的价值函数呢把全部轨迹生成出来然后取平均吗这是蒙特卡洛方法我们介绍另一种方法贝尔曼方程首先单独拿出来一个即时奖励表示到达当前状态获得的那一份奖励所以可以拆成即时奖励和后续奖励后续奖励其实就是当前状态的下一状态的所有价值的期望怎么又变成期望了哪里来的随机随机性其实是因为我们不确定下一状态是谁因此只能根据下一状态的分布来求价值函数的期望所以我们得到注意未来的奖励要带折扣正式推导之前需要使用一个公式这个公式我就不证明了现在推导贝尔曼方程总结起来就是但是这个是解析解需要矩阵求逆因此一般适用于小规模的数据对于大规模的数据一般有两种方法一种是蒙特卡洛方法一种是动态规划的自举方案蒙特卡洛方法就是多次采样然后求平均嘛比如对于状态我们可以从他开始随机产生很多轨迹然后进行得到很多奖励再对这些奖励按照路径数量取平均值当时执行生成一个回合的轨迹从状态和时刻开始使用生成的轨迹计算回报结束循环第二种方法这种方法有点儿像路由算法每个节点都维护一个观测数据然后大家一起收敛首先对所有节点的都设置初始值然后对所有节点根据这个公式更新一次自己的数据然后再更新一直更新直到某次更新时发现老的值和新的值差距很小时就停止更新算法结束对于所有状态当执行对于所有状态结束循环返回对于所有状态马尔可夫决策过程马尔可夫决策过程相比马尔可夫过程多了一个决策环节要从一个状态跳转到另一个状态必须由环境和决策共同决定其中描述了在某个状态下选择各个的概率如果我们对求和就能得到是指在状态下执行动作后环境转移到状态的概率对于奖励我们可以得到表示在状态下执行动作后环境立即给出的确定性奖励如果没有那么其实就表示到达状态就给奖励了马尔可夫决策过程里面的状态转移与马尔可夫奖励过程以及马尔可夫过程的状态转移的差异如图所示马尔可夫过程马尔可夫奖励过程的状态转移是直接决定的比如当前状态是那么直接通过转移概率决定下一个状态是什么但对于马尔可夫决策过程它的中间多了一层动作即智能体在当前状态的时候首先要决定采取某一种动作这样我们会到达某一个黑色的节点到达这个黑色的节点后因为有一定的不确定性所以当智能体当前状态以及智能体当前采取的动作决定过后智能体进入未来的状态其实也是一个概率分布在当前状态与未来状态转移过程中多了一层决策性这是马尔可夫决策过程与之前的马尔可夫过程马尔可夫奖励过程很不同的一点在马尔可夫决策过程中动作是由智能体决定的智能体会采取动作来决定未来的状态转移中策略相关概率与奖励公式的公式是正确的吗为什么右边还要保留动作正确动作不能省略因为环境的下一状态分布依赖于具体执行的动作策略只负责选择动作但选完之后环境如何转移仍然由决定求和的意义正是对所有可能的动作按策略概率加权平均得到在策略下的边缘转移概率那这种写法对吗不对左边是边缘概率已对动作求和右边却保留了一个具体的且没有体现对动作的依赖如果想表达选择特定动作并转移到的联合概率应写作是什么意思它表示在策略下从状态出发能获得的即时奖励的期望值其中是环境给出的期望奖励通常是一个固定函数是策略选择动作的概率加权求和即得平均奖励那是什么能否写成在一般中没有标准定义如果强行这样写只有当奖励与动作无关即对所有成立时才成立此时但在一般情况下奖励依赖于动作且会随策略变化因此不建议用表示这个依赖于策略的量更清晰的写法是直接用避免混淆函数的引入在考虑到决策对整个路径的影响之后原本我们的状态价值函数就不好用了因为这里面压根没有决策因此我们需要一个新的函数来方便我们处理考虑了决策的状态价值函数既然是的期望版本那么我们不如从下手把改造成考虑了决策的版本于是我们得到了动作价值函数注意一下这里的求期望是因为本身就是一个随机变量因为未来路径的不确定导致了会有很多条奖励路径每个路径都有自己的总奖励值因此我们需要对求期望才能得到能够代表当前状态和决策下的奖励在得到动作价值函数之后我们成功地把状态价值函数按照决策拆成了多个部分如果我们把按照概率重新加权求和不就能得到和的关系了吗于是不过也是能继续推推导的就能得到更方便的计算方法所以其实只需要把按照策略加权求和写成期望的形式再把其中的和抵消掉就能整理出来其实也可以从另一个角度理解直接理解成当前奖励加后续状态价值也可以类似的思路我们也可以得到这里也能看出和的区别需要把策略显式地拿出来讨论',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-05-14 15:10:32',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://npm.elemecdn.com/anzhiyu-blog-static@1.0.4/img/avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><a id="site-name" href="/" accesskey="h"><div class="title">Echocean's blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="Random Post" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="Console" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">Interaction</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">Interests</div><span class="author-content-item-title">Find your area of interest</span></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>Articles</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/10/"><span class="card-archive-list-date">October 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/04/"><span class="card-archive-list-date">April 2024</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">June 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="Toggle Display Mode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="Toggle Sidebar"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="Toggle Music"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="Toggle"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="article-meta tags"></span></div></div><h1 class="post-title" itemprop="name headline">markov</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-05-14T06:31:58.000Z" title="Created 2026-05-14 14:31:58">2026-05-14</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-05-14T07:10:32.871Z" title="Updated 2026-05-14 15:10:32">2026-05-14</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为山东·济南"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>山东·济南</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src=""></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2026/05/14/markov/"><header><h1 id="CrawlerTitle" itemprop="name headline">markov</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Echocean</span><time itemprop="dateCreated datePublished" datetime="2026-05-14T06:31:58.000Z" title="Created 2026-05-14 14:31:58">2026-05-14</time><time itemprop="dateCreated datePublished" datetime="2026-05-14T07:10:32.871Z" title="Updated 2026-05-14 15:10:32">2026-05-14</time></header><h1 id="马尔可夫奖励过程">马尔可夫奖励过程</h1>
+<p>某个状态的回报 <span class="math inline">$G_t =
+\sum_{i=0}^{T-t-1}{\gamma^{i}}{r_{t+i+1}} = r_{t+1}+\gamma
+r_{t+2}+\gamma^2r_{t+3}+\cdots+\gamma^{T-t-1}r_T$</span>
+其中，T是最终时刻，<span class="math inline"><em>γ</em></span>
+是折扣因子，越往后折扣越多所以 <span
+class="math inline"><em>G</em><sub><em>t</em></sub></span>
+其实不是某个特定的值？只是一个随机变量吧如果对这个随机变量取期望，就能得到某个状态的价值了，称为状态价值函数</p>
+<p><span
+class="math inline"><em>V</em><sup><em>t</em></sup>(<em>s</em>) = 𝔼[<em>G</em><sub><em>t</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>] = 𝔼[<em>r</em><sub><em>t</em> + 1</sub> + <em>γ</em><em>r</em><sub><em>t</em> + 2</sub> + <em>γ</em><sup>2</sup><em>r</em><sub><em>t</em> + 3</sub> + ... + <em>γ</em><sup><em>T</em> − <em>t</em> − 1</sup><em>r</em><sub><em>T</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p><span class="math inline"><em>t</em></span>
+表示当前是第几个时间步，<span class="math inline"><em>s</em></span>
+表示该时间步所处的具体状态,并且我们要注意，其实T也是一个参数，因为即使<span
+class="math inline"><em>t</em></span>，<span
+class="math inline"><em>s</em></span>相同，剩余步数不同也会导致回报的期望不同</p>
+<h1 id="贝尔曼方程">贝尔曼方程</h1>
+<p>我们有了某个状态下某个轨迹的实际回报，如何计算他的价值函数呢？把全部轨迹生成出来然后取平均吗？这是蒙特卡洛方法，我们介绍另一种方法，贝尔曼方程</p>
+<p>首先单独拿出来一个即时奖励 <span
+class="math inline"><em>R</em>(<em>s</em>)</span> ,
+表示到达当前状态获得的那一份奖励所以 <span
+class="math inline"><em>V</em>(<em>s</em>)</span>
+可以拆成即时奖励和后续奖励，后续奖励其实就是当前状态的下一状态的所有价值的期望。怎么又变成期望了？哪里来的随机？随机性其实是因为我们不确定下一状态是谁，因此只能根据下一状态的分布来求价值函数的期望。所以我们得到
+<span
+class="math inline"><em>V</em>(<em>s</em>) = <em>R</em>(<em>s</em>) + <em>γ</em>∑<sub><em>s</em><sup>′</sup> ∈ <em>S</em></sub><em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>)<em>V</em>(<em>s</em><sup>′</sup>)</span>
+注意未来的奖励要带折扣</p>
+<p>正式推导之前，需要使用一个公式</p>
+<p><span
+class="math inline">𝔼[<em>V</em>(<em>s</em><sub><em>t</em> + 1</sub>)|<em>s</em><sub><em>t</em></sub>] = 𝔼[<em>G</em><sub><em>t</em> + 1</sub>|<em>s</em><sub><em>t</em></sub>]</span></p>
+<p>这个公式我就不证明了</p>
+<p>现在推导贝尔曼方程：</p>
+<p><span class="math inline"><em>V</em>(<em>s</em>)</span></p>
+<p><span
+class="math inline"> = 𝔼[<em>G</em><sub><em>t</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p><span
+class="math inline"> = 𝔼[<em>r</em><sub><em>t</em> + 1</sub> + <em>γ</em><em>r</em><sub><em>t</em> + 2</sub> + <em>γ</em><sup>2</sup><em>r</em><sub><em>t</em> + 3</sub> + ... + <em>γ</em><sup><em>T</em> − <em>t</em> − 1</sup><em>r</em><sub><em>T</em></sub>]</span></p>
+<p><span
+class="math inline"> = 𝔼[<em>r</em><sub><em>t</em> + 1</sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>] + <em>γ</em>𝔼[<em>γ</em><em>r</em><sub><em>t</em> + 2</sub> + <em>γ</em><sup>2</sup><em>r</em><sub><em>t</em> + 3</sub> + ... + <em>γ</em><sup><em>T</em> − <em>t</em> − 1</sup><em>r</em><sub><em>T</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p><span
+class="math inline"> = <em>R</em>(<em>s</em>) + <em>γ</em>𝔼[<em>G</em><sub><em>t</em> + 1</sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p><span
+class="math inline"> = <em>R</em>(<em>s</em>) + <em>γ</em>𝔼[<em>V</em>(<em>s</em><sub><em>t</em> + 1</sub>)|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p><span
+class="math inline"> = <em>R</em>(<em>s</em>) + <em>γ</em>∑<sub><em>s</em><sup>′</sup> ∈ <em>S</em></sub><em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>)<em>V</em>(<em>s</em><sup>′</sup>)</span></p>
+<p><span class="math inline">$\begin{pmatrix}V(s_1) \\ V(s_2) \\\vdots
+\\V(s_N)\end{pmatrix}=\begin{pmatrix}R(s_1) \\R(s_2) \\\vdots
+\\R(s_N)\end{pmatrix}+\gamma\begin{pmatrix}p(s_1 \mid s_1) &amp; p(s_2
+\mid s_1) &amp; \cdots &amp; p(s_N \mid s_1) \\p(s_1 \mid s_2) &amp;
+p(s_2 \mid s_2) &amp; \cdots &amp; p(s_N \mid s_2) \\\vdots &amp; \vdots
+&amp; \ddots &amp; \vdots \\p(s_1 \mid s_N) &amp; p(s_2 \mid s_N) &amp;
+\cdots &amp; p(s_N \mid s_N)\end{pmatrix}\begin{pmatrix}V(s_1) \\V(s_2)
+\\\vdots \\V(s_N)\end{pmatrix}$</span></p>
+<p>总结起来就是</p>
+<p><span
+class="math inline"><strong>V</strong> = <strong>R</strong> + <em>γ</em><strong>PV</strong></span></p>
+<p><span
+class="math inline"><strong>IV</strong> = <strong>R</strong> + <em>γ</em><strong>PV</strong></span></p>
+<p><span
+class="math inline">(<strong>I</strong> − <em>γ</em><strong>P</strong>)<strong>V</strong> = <strong>R</strong></span></p>
+<p><span
+class="math inline"><strong>V</strong> = (<strong>I</strong> − <em>γ</em><strong>P</strong>)<sup>−1</sup><strong>R</strong></span></p>
+<p>但是这个是解析解，需要矩阵求逆，因此一般适用于小规模的数据</p>
+<p>对于大规模的数据，一般有两种方法，一种是蒙特卡洛方法，一种是动态规划的自举方案</p>
+<p>蒙特卡洛方法就是多次采样然后求平均嘛，比如对于状态 <span
+class="math inline"><em>s</em><sub>4</sub></span>
+,我们可以从他开始随机产生很多轨迹，然后进行action，得到很多奖励，再对这些奖励按照路径数量取平均值
+<span class="math inline">$1: i \leftarrow 0, G_t \leftarrow 0 \\ 2: 当
+i \neq N 时, 执行: \\ 3: \qquad 生成一个回合的轨迹, 从状态 s 和时刻 t
+开始 \\ 4: \qquad 使用生成的轨迹计算回报 g = \sum_{i=t}^{H-1}
+\gamma^{i-t} r_i \\ 5: \qquad G_t \leftarrow G_t + g, i \leftarrow i + 1
+\\ 6: 结束循环 \\ 7: V_t(s) \leftarrow G_t / N$</span></p>
+<p>第二种方法：</p>
+<p>这种方法有点儿像路由算法，每个节点都维护一个观测数据，然后大家一起收敛
+首先对所有节点的 <span class="math inline"><em>V</em>(<em>s</em>)</span>
+都设置初始值，然后对所有节点根据 <span
+class="math inline"><em>V</em>(<em>s</em>) = <em>R</em>(<em>s</em>) + <em>γ</em>∑_<em>s</em><sup>′</sup> ∈ <em>S</em><em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>)<em>V</em>(<em>s</em><sup>′</sup>)</span>
+这个公式更新一次自己的数据，然后再更新，一直更新。。。。。。直到某次更新时发现老的值和新的值差距很小时就停止更新，算法结束</p>
+<p><span class="math inline">$1: 对于所有状态 s \in S, V'(s) \leftarrow
+0, V(s) \leftarrow \infty \\ 2: 当 \|V - V'\| &gt; \epsilon 执行 \\ 3:
+\qquad V \leftarrow V' \\ 4: \qquad 对于所有状态 s \in S, V'(s) = R(s) +
+\gamma \sum_{s' \in S} P(s' | s)V(s') \\ 5: \qquad 结束循环 \\ 6: 返回
+V'(s) 对于所有状态 s \in S$</span></p>
+<h1 id="马尔可夫决策过程">马尔可夫决策过程</h1>
+<p>马尔可夫决策过程相比马尔可夫过程，多了一个决策环节,
+要从一个状态跳转到另一个状态，必须由环境和决策共同决定：</p>
+<p><span
+class="math inline"><em>p</em><sub><em>π</em></sub>(<em>s</em><sup>′</sup>, <em>a</em>|<em>s</em>) = <em>π</em>(<em>a</em>|<em>s</em>)<em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>, <em>a</em>)</span>
+，其中 <span
+class="math inline"><em>π</em>(<em>a</em>|<em>s</em>) = <em>p</em>(<em>a</em>_<em>t</em> = <em>a</em>|<em>s</em>_<em>t</em> = <em>s</em>)</span>
+描述了在某个状态下，选择各个action的概率如果我们对a求和，就能得到</p>
+<p><span
+class="math inline"><em>P</em><sub><em>π</em></sub>(<em>s</em><sup>′</sup>|<em>s</em>) = ∑<sub><em>a</em> ∈ <em>A</em></sub><em>π</em>(<em>a</em>|<em>s</em>)<em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>, <em>a</em>)</span>
+， <span
+class="math inline"><em>p</em>(<em>s</em><sup>′</sup>|<em>s</em>, <em>a</em>)</span>
+是指在状态 <em>s</em> 下执行动作 <em>a</em> 后，环境转移到状态
+​<em>s</em>​′ 的概率对于奖励，我们可以得到：</p>
+<p><span
+class="math inline"><em>r</em><sub><em>π</em></sub>(<em>s</em>) = ∑<sub><em>a</em> ∈ <em>A</em></sub><em>π</em>(<em>a</em>|<em>s</em>)<em>R</em>(<em>s</em>, <em>a</em>)</span></p>
+<p><span class="math inline"><em>R</em>(<em>s</em>, <em>a</em>)</span>
+表示在状态 <em>s</em> 下执行动作 <em>a</em> 后，环境立即给出的确定性奖励
+（如果没有a，那么其实就表示到达状态s就给奖励了）马尔可夫决策过程里面的状态转移与马尔可夫奖励过程以及马尔可夫过程的状态转移的差异如图所示。马尔可夫过程/马尔可夫奖励过程的状态转移是直接决定的。比如当前状态是
+​<em>s</em>​，那么直接通过转移概率决定下一个状态是什么。但对于马尔可夫决策过程，它的中间多了一层动作
+<em>a</em>
+，即智能体在当前状态的时候，首先要决定采取某一种动作，这样我们会到达某一个黑色的节点。到达这个黑色的节点后，因为有一定的不确定性，所以当智能体当前状态以及智能体当前采取的动作决定过后，智能体进入未来的状态其实也是一个概率分布。在当前状态与未来状态转移过程中多了一层决策性，这是马尔可夫决策过程与之前的马尔可夫过程/马尔可夫奖励过程很不同的一点。在马尔可夫决策过程中，动作是由智能体决定的，智能体会采取动作来决定未来的状态转移。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/markov.png" alt="markov" />
+<figcaption aria-hidden="true">markov</figcaption>
+</figure>
+<blockquote>
+<h1 id="mdp-中策略相关概率与奖励公式的-qa">MDP
+中策略相关概率与奖励公式的 Q&amp;A</h1>
+<p>​<strong>Q1：公式 ​</strong>​ <span
+class="math inline"><em>p</em><sub><em>π</em></sub>(<em>s</em><sup>′</sup> ∣ <em>s</em>) = ∑<sub><em>a</em></sub><em>π</em>(<em>a</em> ∣ <em>s</em>) <em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>, <em>a</em>)</span></p>
+<p>​<strong>​ 是正确的吗？为什么右边还要保留动作 ​</strong><span
+class="math inline"><em>a</em></span><strong>？</strong></p>
+</blockquote>
+<p>✅ 正确。动作 不能省略，因为环境的下一状态分布 <span
+class="math inline"><em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>, <em>a</em>)</span>
+依赖于具体执行的动作。策略 <span
+class="math inline"><em>π</em>(<em>a</em> ∣ <em>s</em>)</span>
+只负责选择动作，但选完之后环境如何转移仍然由 <span
+class="math inline"><em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>, <em>a</em>)</span>
+决定。求和的意义正是：对所有可能的动作按策略概率加权平均，得到在策略下的边缘转移概率。</p>
+<p>​<strong>Q2：那 ​</strong> ​<span
+class="math inline"><em>p</em><sub><em>π</em></sub>(<em>s</em><sup>′</sup> ∣ <em>s</em>) = <em>π</em>(<em>a</em> ∣ <em>s</em>) <em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>)</span>
+<strong>​ 这种写法对吗？</strong></p>
+<p>❌ 不对。左边是边缘概率（已对动作求和），右边却保留了一个具体的 ，且
+<span
+class="math inline"><em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>)</span>
+没有体现对动作的依赖。如果想表达“选择特定动作 <span
+class="math inline"><em>a</em></span> 并转移到 <span
+class="math inline"><em>s</em></span> ”的联合概率，应写作 <span
+class="math inline"><em>p</em><sub><em>π</em></sub>(<em>s</em><sup>′</sup>, <em>a</em> ∣ <em>s</em>) = <em>π</em>(<em>a</em> ∣ <em>s</em>) <em>p</em>(<em>s</em><sup>′</sup> ∣ <em>s</em>, <em>a</em>)</span>
+。</p>
+<p>​<strong>Q3：</strong>​ <span
+class="math inline"><em>r</em><sub><em>π</em></sub>(<em>s</em>) = ∑<sub><em>a</em></sub><em>π</em>(<em>a</em> ∣ <em>s</em>) <em>R</em>(<em>s</em>, <em>a</em>)</span>
+<strong>​ 是什么意思？</strong> 它表示在策略 <span
+class="math inline"><em>π</em></span> 下，从状态 <span
+class="math inline"><em>s</em></span>
+出发能获得的​<strong>即时奖励的期望值</strong>​。其中 <span
+class="math inline"><em>R</em>(<em>s</em>, <em>a</em>)</span>
+是环境给出的期望奖励（通常是一个固定函数），<span
+class="math inline"><em>π</em>(<em>a</em> ∣ <em>s</em>)</span>
+是策略选择动作的概率，加权求和即得平均奖励。</p>
+<p>​<strong>Q4：那 ​</strong> ​<span
+class="math inline"><em>R</em>(<em>s</em>)</span> <strong>​
+是什么？能否写成 ​</strong> <span
+class="math inline"><em>R</em>(<em>s</em>) = <em>r</em><sub><em>π</em></sub>(<em>s</em>) = ∑<sub><em>a</em></sub><em>π</em>(<em>a</em> ∣ <em>s</em>)<em>R</em>(<em>s</em>, <em>a</em>)</span>
+**?</p>
+<p>在一般 MDP 中，<span
+class="math inline"><em>R</em>(<em>s</em>)</span>
+没有标准定义。如果强行这样写，只有当奖励与动作无关（即 <span
+class="math inline"><em>R</em>(<em>s</em>, <em>a</em>) = <em>R</em>(<em>s</em>)</span>
+对所有 <span class="math inline"><em>a</em></span> 成立）时才成立，此时
+<span
+class="math inline"><em>r</em><sub><em>π</em></sub>(<em>s</em>) = <em>R</em>(<em>s</em>)</span>。但在一般情况下，奖励依赖于动作，且
+<span
+class="math inline"><em>r</em><sub><em>π</em></sub>(<em>s</em>)</span>
+会随策略变化，因此不建议用 <span
+class="math inline"><em>R</em>(<em>s</em>)</span>
+表示这个依赖于策略的量。更清晰的写法是直接用 <span
+class="math inline"><em>r</em><sub><em>π</em></sub>(<em>s</em>)</span>，避免混淆。</p>
+<h1 id="q函数的引入">Q函数的引入</h1>
+<p>在考虑到决策对整个路径的影响之后，原本我们的状态价值函数</p>
+<p><span
+class="math inline"><em>V</em><sup><em>t</em></sup>(<em>s</em>) = 𝔼[<em>G</em><sub><em>t</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span></p>
+<p>就不好用了，因为这里面压根没有决策，因此我们需要一个新的函数来方便我们处理考虑了决策的状态价值函数
+<span
+class="math inline"><em>V</em><sup><em>t</em></sup>(<em>s</em>)</span>
+既然V是G的期望版本，那么我们不如从G下手，把G改造成考虑了决策的版本，于是我们得到了Q（动作价值函数）</p>
+<p><span
+class="math inline"><em>Q</em><sub><em>π</em></sub>(<em>s</em>, <em>a</em>) = 𝔼<sub><em>π</em></sub>[<em>G</em><sub><em>t</em></sub>|<em>s</em><sub><em>t</em></sub> = <em>s</em>, <em>a</em><sub><em>t</em></sub> = <em>a</em>]</span></p>
+<blockquote>
+<p>注意一下，这里的求期望是因为G本身就是一个随机变量，因为未来路径的不确定导致了会有很多条奖励路径，每个路径都有自己的总奖励值（
+<span class="math inline">$G_t =
+\sum_{i=0}^{T-t-1}{\gamma^{i}}{r_{t+i+1}} = r_{t+1}+\gamma
+r_{t+2}+\gamma^2r_{t+3}+...+\gamma^{T-t-1}r_T$</span>
+），因此我们需要对G求期望，才能得到能够代表当前状态和决策下的奖励</p>
+</blockquote>
+<p>在得到动作价值函数之后，我们成功地把状态价值函数 <span
+class="math inline"><em>V</em></span> 按照决策拆成了多个部分 <span
+class="math inline"><em>Q</em></span>，如果我们把 <span
+class="math inline"><em>Q</em></span>
+按照概率重新加权求和，不就能得到V和Q的关系了吗，于是：</p>
+<p><span
+class="math inline"><em>V</em><sub><em>π</em></sub>(<em>s</em>) = ∑<sub><em>a</em> ∈ <em>A</em></sub><em>π</em>(<em>a</em>|<em>s</em>)<em>Q</em><sub><em>π</em></sub>(<em>s</em>, <em>a</em>)</span></p>
+<p>不过Q也是能继续推推导的，就能得到更方便的计算方法：</p>
+<p><span class="math inline">$Q(s, a) \\= \mathbb{E} \left[ G_t \mid s_t
+= s, a_t = a \right] \\ = \mathbb{E} \left[ r_{t+1} + \gamma r_{t+2} +
+\gamma^2 r_{t+3} + \ldots \mid s_t = s, a_t = a \right] \\ = \mathbb{E}
+\left[ r_{t+1} \mid s_t = s, a_t = a \right] + \gamma \mathbb{E} \left[
+r_{t+2} + \gamma r_{t+3} + \gamma^2 r_{t+4} + \ldots \mid s_t = s, a_t =
+a \right] \\ = R(s, a) + \gamma \mathbb{E} \left[ G_{t+1} \mid s_t = s,
+a_t = a \right] \\ = R(s, a) + \gamma \mathbb{E} \left[ V(s_{t+1}) \mid
+s_t = s, a_t = a \right] \\ = R(s, a) + \gamma \sum_{s' \in S} p(s' \mid
+s, a) V(s')$</span></p>
+<p>所以其实</p>
+<p><span
+class="math inline"><em>V</em><sub><em>π</em></sub>(<em>s</em>) = 𝔼<sub><em>π</em></sub>[<em>r</em><sub><em>t</em> + 1</sub> + <em>γ</em><em>V</em><sub><em>π</em></sub>(<em>s</em><sub><em>t</em></sub> + 1)|<em>s</em><sub><em>t</em></sub> = <em>s</em>]</span>
+，只需要把按照策略加权求和写成期望的形式，再把其中的a和 <span
+class="math inline">∑_<em>a</em> ∈ <em>A</em><em>π</em>(<em>a</em>|<em>s</em>)</span>
+抵消掉，就能整理出来，其实也可以从另一个角度理解，直接理解成当前奖励加后续状态价值也可以类似的思路，我们也可以得到：</p>
+<p><span
+class="math inline"><em>Q</em><sub><em>π</em></sub>(<em>s</em>, <em>a</em>) = 𝔼<sub><em>π</em></sub>[<em>r</em><sub><em>t</em> + 1</sub> + <em>γ</em><em>Q</em><sub><em>π</em></sub>(<em>s</em><sub><em>t</em> + 1</sub>, <em>a</em><sub><em>t</em> + 1</sub>) ∣ <em>s</em><sub><em>t</em></sub> = <em>s</em>, <em>a</em><sub><em>t</em></sub> = <em>a</em>]</span>
+，这里也能看出Q和V的区别，Q需要把策略a显式地拿出来讨论。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Echocean</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2026/05/14/markov/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2026/05/14/markov/')">markov</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2026/05/14/markov/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=markov&amp;url=http://example.com/2026/05/14/markov/&amp;pic=" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"></div></div></div><div class="post_share"><div class="social-share" data-image="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/05/13/ToolDNS/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">ToolDNS</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2023/04/27/64496e511b09c.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"></div></div></div><div class="card-widget anzhiyu-right-widget" id="card-wechat" onclick="null"><div id="flip-wrapper"><div id="flip-content"><div class="face" style="background: url(https://bu.dusays.com/2023/01/13/63c02edf44033.png) center center / 100% no-repeat"></div><div class="back face" style="background: url(https://bu.dusays.com/2023/05/13/645fa415e8694.png) center center / 100% no-repeat"></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%A5%96%E5%8A%B1%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">马尔可夫奖励过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B4%9D%E5%B0%94%E6%9B%BC%E6%96%B9%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">贝尔曼方程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">马尔可夫决策过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mdp-%E4%B8%AD%E7%AD%96%E7%95%A5%E7%9B%B8%E5%85%B3%E6%A6%82%E7%8E%87%E4%B8%8E%E5%A5%96%E5%8A%B1%E5%85%AC%E5%BC%8F%E7%9A%84-qa"><span class="toc-number">4.</span> <span class="toc-text">MDP
+中策略相关概率与奖励公式的 Q&amp;A</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#q%E5%87%BD%E6%95%B0%E7%9A%84%E5%BC%95%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">Q函数的引入</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/14/markov/" title="markov">markov</a><time datetime="2026-05-14T06:31:58.000Z" title="Created 2026-05-14 14:31:58">2026-05-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/13/ToolDNS/" title="ToolDNS">ToolDNS</a><time datetime="2026-05-13T06:05:32.000Z" title="Created 2026-05-13 14:05:32">2026-05-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/14/rich-arq/" title="rich-arq">rich-arq</a><time datetime="2026-04-14T02:24:17.000Z" title="Created 2026-04-14 10:24:17">2026-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/10/Flow-Matching/" title="Flow Matching">Flow Matching</a><time datetime="2025-10-10T05:52:06.000Z" title="Created 2025-10-10 13:52:06">2025-10-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/14/use-of-AFF3CT/" title="use of AFF3CT">use of AFF3CT</a><time datetime="2025-06-14T03:54:03.000Z" title="Created 2025-06-14 11:54:03">2025-06-14</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2020 - 2026 By <a class="footer-bar-link" href="/" title="Echocean" target="_blank">Echocean</a></div></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">7</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">2</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://hexo.anheyu.com/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://image.anheyu.com/" title="安知鱼图床"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://image.anheyu.com/favicon.ico" alt="安知鱼图床"/><span class="back-menu-item-text">安知鱼图床</span></a></div></div></div><span class="sidebar-menu-item-title">标签</span></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2021 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2020 By 安知鱼 V1.7.1",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Echocean 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.cbd.int/mathjax@4.0.0/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://cdn.cbd.int/qrcodejs@1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
