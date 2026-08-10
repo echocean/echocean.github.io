@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>轻量级电子功德收集器</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: #050505;
+      color: #fff;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(32rem, calc(100% - 2rem));
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.5rem, 6vw, 2.25rem);
+      font-weight: 650;
+    }
+
+    .count {
+      margin: 0;
+      color: #d6d3d1;
+      font-size: clamp(1.15rem, 4vw, 1.5rem);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 18rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .fish {
+      width: 9rem;
+      height: 9rem;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      transition: transform 100ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .fish:hover {
+      transform: scale(1.05);
+    }
+
+    .fish:active {
+      transform: scale(0.9);
+    }
+
+    .fish:focus-visible {
+      outline: 3px solid #facc15;
+      outline-offset: 0.5rem;
+    }
+
+    .fish img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .merit {
+      position: absolute;
+      left: calc(50% + 4.5rem);
+      top: 42%;
+      margin: 0;
+      color: #fef08a;
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .merit.play {
+      animation: rise 500ms ease-out;
+    }
+
+    .hint {
+      margin: 0;
+      color: #78716c;
+      font-size: 0.9rem;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 1;
+        transform: translateY(1.5rem);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-1.5rem);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fish {
+        transition: none;
+      }
+
+      .merit.play {
+        animation: none;
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>轻量级电子功德收集器</h1>
+    <p class="count">本机总功德：<strong id="count">0</strong></p>
+    <div class="stage">
+      <button class="fish" id="fish" type="button" aria-label="敲击木鱼，功德加一">
+        <img src="./images/muyu.jpg" alt="">
+      </button>
+      <p class="merit" id="merit" aria-hidden="true">功德 +1</p>
+    </div>
+    <p class="hint">点击木鱼积攒功德；即使不点击，功德也会随时间增长。</p>
+  </main>
+  <script>
+    const count = document.querySelector('#count')
+    const fish = document.querySelector('#fish')
+    const merit = document.querySelector('#merit')
+    let total = 0
+
+    const addMerit = () => {
+      total += 1
+      count.textContent = total
+    }
+
+    fish.addEventListener('click', () => {
+      addMerit()
+      merit.classList.remove('play')
+      void merit.offsetWidth
+      merit.classList.add('play')
+    })
+
+    merit.addEventListener('animationend', () => {
+      merit.classList.remove('play')
+    })
+
+    setInterval(addMerit, 1000)
+  </script>
+</body>
+</html>
